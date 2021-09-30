@@ -29,6 +29,12 @@ class ClassifiedController extends Controller
         return view("dashboard", compact("products", "categories"));
     }
 
+    public function productsJson()
+    {
+        $products = ProductService::get();
+        return response()->json($products);
+    }
+
     public function crawler()
     {
         $subcategories = Subcategory::all();
