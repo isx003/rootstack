@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Artisan;
 
 class ClassifiedController extends Controller
 {
@@ -14,9 +13,6 @@ class ClassifiedController extends Controller
      */
     public function index()
     {
-        Artisan::call('db:seed', [
-            '--class' => 'CategoriesAndSubcategoriesSeeder',
-        ]);
     }
 
     /**

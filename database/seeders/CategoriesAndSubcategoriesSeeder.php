@@ -17,11 +17,10 @@ class CategoriesAndSubcategoriesSeeder extends Seeder
     {
         $categories = WebScrapingService::getCategoriesAndSubcategories();
         foreach($categories as $category){
-            $categoryDB = Category::where("name", $category["name"])
-                ->first();
-            $categoryDB = $categoryDB || new Category;
+            $categoryDB = new Category;
             $categoryDB->name = $category["name"];
             $categoryDB->save();
+            $categoryDB->subcategories()->createMany($category["subcategories"]);
         }
     }
 }

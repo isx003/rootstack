@@ -20,6 +20,10 @@ class CreateTableSubcategories extends Migration
             $table->string("slug", 300);
             $table->timestamps();
         });
+
+        Artisan::call('db:seed', [
+            '--class' => 'CategoriesAndSubcategoriesSeeder',
+        ]);
     }
 
     /**
