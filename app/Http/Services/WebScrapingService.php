@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 
+use Illuminate\Support\Str;
 use Illuminate\Http\Services;
 use Symfony\Component\HttpClient\HttpClient;
 
@@ -35,14 +36,30 @@ class WebScrapingService
     {
         $slug = "/coches-de-segunda-mano";
         $crawler = self::initCrawler($slug);
-        $products = $crawler->filter(".ma-AdCard")->each(function($nodeProduc){
-            $name = $nodeProduc->filter('.ma-AdCard-titleLink')->first()->text();
-            $description = $nodeProduc->filter('.ma-AdCardDescription-text')->first()->text();
-            $price = $nodeProduc->filter('.ma-AdPrice-value')->first()->text();
-            $price = trim(str_replace("€", "", $price));
-            return compact("name", "description", "price");
-        });
-        dd($products);
+        $products = $crawler->filter(".ma-AdCard")->each(function($nodeProduct){
+            $name = $nodeProduct->filter('.ma-AdCard-titleLink')->first()->text();
+            $slug = $nodeProduct->filter('.ma-AdCard-titleLink')->first()->extract(array('href'))[0];
+            $description = $nodeProduct->filter('.ma-AdCardDescription-text')->first()->text();
 
+            $price = $nodeProduct->filter('.ma-AdPrice-value')->first()->text();
+            $price = trim(str_replace("€", "", $price));
+
+            $photo = $nodeProduct->filter('.ma-AdCard-photo')->first()->extract(array('src'))[0];
+            return compact("name", "description", "price", "photo", "slug");
+        });
+        return $products;
+    }
+
+    public static function generateImageName()
+    {
+        return Str::random(40)  . ".jpg";
+    }
+
+    public static function downloadImage($url)
+    {
+        $imageName = WebScrapingService::generateImageName();
+        $imgPath = public_path("img/{$imageName}");
+        file_put_contents($imgPath, file_get_contents($url));
+        return $imageName;
     }
 }
