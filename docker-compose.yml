@@ -24,13 +24,13 @@ services:
       MYSQL_DATABASE: ${DB_DATABASE}
       MYSQL_PASSWORD: ${DB_PASSWORD}
     volumes:
-      - ./docker-compose/mysql:/var/lib/mysql
+      - ./docker-compose/db:/var/lib/mysql
     ports:
       - ${DB_PORT}:3306
 
   nginx:
     image: nginx:alpine
-    container_name: travellist-nginx
+    container_name: nginx
     restart: unless-stopped
     ports:
       - 8000:80
