@@ -12,11 +12,11 @@
                     <form class="row gx-3 gy-2 align-items-center">
                         <div class="col-sm-3">
                             <div class="input-group">
-                                <div class="input-group-text">Category</div>
+                                <div class="input-group-text">Category </div>
                                 <select class="form-control" name="category" id="category">
                                     <option value="">[ALL]</option>
                                     @foreach ($categories as $category)
-                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                    <option value="{{ $category->id }}" @if(request()->query('category') == $category->id ) selected @endif>{{ $category->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -24,14 +24,14 @@
                         <div class="col-sm-3">
                             <div class="input-group">
                                 <div class="input-group-text">Title</div>
-                                <input type="text" class="form-control" name="title" id="titulo" placeholder="Title">
+                                <input type="text" class="form-control" name="title" id="titulo" placeholder="Title" value="{{request()->query('title')}}">
                             </div>
                         </div>
                         <div class="col-sm-4">
                             <label class="visually-hidden" for="description">Description</label>
                             <div class="input-group">
                               <div class="input-group-text">Description</div>
-                              <input type="text" class="form-control" name="description" id="description" placeholder="Description">
+                              <input type="text" class="form-control" name="description" id="description" placeholder="Description" value="{{request()->query('description')}}">
                             </div>
                         </div>
                         <div class="col-sm-2">
