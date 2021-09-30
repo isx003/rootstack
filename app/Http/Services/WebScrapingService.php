@@ -11,7 +11,7 @@ class WebScrapingService
 
     private static function initCrawler($slug = '')
     {
-        $client = new \Goutte\Client(HttpClient::create(['timeout' => 5]));
+        $client = new \Goutte\Client();
         return $client->request('GET', self::BASE_URL . $slug);
     }
 
@@ -19,21 +19,30 @@ class WebScrapingService
     {
         $crawler = self::initCrawler();
         $categories = $crawler->filter('.ma-CategoriesCategory')->each(function ($node){
-            $name = $node->filter('.ma-MainCategory-mainCategoryNameLink')->each(function($nodeName){
-                return $nodeName->text();
-            });
+            $name = $node->filter('.ma-MainCategory-mainCategoryNameLink')->first()->text();
             $subcategories = $node->filter('.ma-SharedCrosslinks-link')->each(function($nodeSubcategory){
-                $href = $nodeSubcategory->extract(array('href'))[0];
                 return [
                     "name" => $nodeSubcategory->text(),
-                    "slug" => $href
+                    "slug" => $nodeSubcategory->extract(array('href'))[0]
                 ];
             });
-            return [
-                "name" => $name[0],
-                "subcategories" => $subcategories
-            ];
+            return compact("name", "subcategories");
         });
         return $categories;
+    }
+
+    public static function getProductsBySlug()
+    {
+        $slug = "/coches-de-segunda-mano";
+        $crawler = self::initCrawler($slug);
+        $products = $crawler->filter(".ma-AdCard")->each(function($nodeProduc){
+            $name = $nodeProduc->filter('.ma-AdCard-titleLink')->first()->text();
+            $description = $nodeProduc->filter('.ma-AdCardDescription-text')->first()->text();
+            $price = $nodeProduc->filter('.ma-AdPrice-value')->first()->text();
+            $price = trim(str_replace("€", "", $price));
+            return compact("name", "description", "price");
+        });
+        dd($products);
+
     }
 }
